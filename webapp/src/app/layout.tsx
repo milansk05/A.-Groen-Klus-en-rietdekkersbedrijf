@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
 import { Bricolage_Grotesque } from "next/font/google";
-import "./globals.css";
-import Navbar from "./components/navigatie/navbar"
+import './globals.css'
+import Navbar from './components/navigation/Navbar'
+import Footer from './components/footer'
 
 const bricolageGrotesque = Bricolage_Grotesque({
   variable: "--font-bricolage-grotesque",
@@ -15,17 +16,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${bricolageGrotesque.className} antialiased`}
-      >
-        <Navbar/>
+    <html lang="nl">
+      <body className={bricolageGrotesque.className}>
+        <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
-  );
+  )
 }
