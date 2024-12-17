@@ -95,7 +95,7 @@ export default function ContactForm() {
           </div>
           <div className="bg-white shadow-lg p-6 rounded-lg h-48 flex justify-center items-center">
             <h4 className="font-bold text-center text-gray-500">
-              Ruimte voor Google Maps of logo
+              Ruimte voor Google Maps of logo1
             </h4>
           </div>
         </div>
