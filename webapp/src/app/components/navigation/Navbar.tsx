@@ -5,9 +5,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import CurvedShape from '../ui/CurvedShape'
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const pathname = usePathname()
+
+    if (pathname?.startsWith('/admin')) return null
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen)
