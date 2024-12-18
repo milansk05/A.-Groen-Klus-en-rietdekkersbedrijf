@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
-import CurvedShape from '../ui/CurvedShape'
+import CurvedShape from '../ui/curvedshape'
 import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
