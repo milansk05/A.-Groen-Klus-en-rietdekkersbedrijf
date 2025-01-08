@@ -1,29 +1,39 @@
-import { useState } from 'react'
+'use client'
+
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 
 interface ImageContent {
     id: number;
-    naam: string;
-    beschrijving: string;
+    name: string;
+    description: string;
     url: string;
     uploadDatum: string;
 }
 
 interface ImageFormProps {
     imageContent?: ImageContent;
-    onSubmit: (imageContent: Omit<ImageContent, 'id' | 'uploadDatum'>) => void;
+    onSubmit: (imageContent: FormData) => void;
     onCancel: () => void;
 }
 
 export default function ImageForm({ imageContent, onSubmit, onCancel }: ImageFormProps) {
-    const [naam, setNaam] = useState(imageContent?.naam || '')
-    const [beschrijving, setBeschrijving] = useState(imageContent?.beschrijving || '')
-    const [url, setUrl] = useState(imageContent?.url || '')
+    const [name, setName] = useState(imageContent?.name || '')
+    const [description, setDescription] = useState(imageContent?.description || '')
     const [previewUrl, setPreviewUrl] = useState(imageContent?.url || '')
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onSubmit({ naam, beschrijving, url })
+        const formData = new FormData()
+        formData.append('name', name)
+        formData.append('description', description)
+        if (fileInputRef.current?.files?.[0]) {
+            formData.append('file', fileInputRef.current.files[0])
+        } else if (imageContent) {
+            formData.append('url', imageContent.url)
+        }
+        onSubmit(formData)
     }
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +41,6 @@ export default function ImageForm({ imageContent, onSubmit, onCancel }: ImageFor
         if (file) {
             const reader = new FileReader()
             reader.onloadend = () => {
-                setUrl(reader.result as string)
                 setPreviewUrl(reader.result as string)
             }
             reader.readAsDataURL(file)
@@ -41,43 +50,43 @@ export default function ImageForm({ imageContent, onSubmit, onCancel }: ImageFor
     return (
         <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="naam">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
                     Naam
                 </label>
                 <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="naam"
+                    id="name"
                     type="text"
                     placeholder="Afbeeldingsnaam"
-                    value={naam}
-                    onChange={(e) => setNaam(e.target.value)}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     required
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="beschrijving">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
                     Beschrijving
                 </label>
                 <textarea
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="beschrijving"
+                    id="description"
                     placeholder="Afbeeldingsbeschrijving"
-                    value={beschrijving}
-                    onChange={(e) => setBeschrijving(e.target.value)}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     rows={3}
-                    required
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="afbeelding">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="file">
                     Afbeelding
                 </label>
                 <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="afbeelding"
+                    id="file"
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
+                    ref={fileInputRef}
                 />
             </div>
             {previewUrl && (

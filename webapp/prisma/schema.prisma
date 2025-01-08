@@ -3,9 +3,31 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  email      String   @db.VarChar(100)
+  password   String
+  role       Role
+  last_login DateTime @db.Date
+}
 
+enum Role {
+  Admin
+  User
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  status      String
+  description String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

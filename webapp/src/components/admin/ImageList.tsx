@@ -1,10 +1,10 @@
-import Image from 'next/image'
 import { Edit, Trash2 } from 'lucide-react'
+import Image from 'next/image'
 
 interface ImageContent {
     id: number;
-    naam: string;
-    beschrijving: string;
+    name: string;
+    description: string;
     url: string;
     uploadDatum: string;
 }
@@ -23,15 +23,15 @@ export default function ImageList({ imageContents, onEdit, onDelete }: ImageList
                     <div className="relative h-48">
                         <Image
                             src={imageContent.url}
-                            alt={imageContent.naam}
+                            alt={imageContent.name}
                             layout="fill"
                             objectFit="cover"
                         />
                     </div>
                     <div className="p-4">
-                        <h3 className="font-bold text-lg mb-2">{imageContent.naam}</h3>
-                        <p className="text-gray-600 text-sm mb-2">{imageContent.beschrijving}</p>
-                        <p className="text-gray-500 text-xs mb-4">Geüpload op: {imageContent.uploadDatum}</p>
+                        <h3 className="font-bold text-lg mb-2">{imageContent.name}</h3>
+                        <p className="text-gray-600 text-sm mb-2">{imageContent.description}</p>
+                        <p className="text-gray-500 text-xs mb-4">Geüpload op: {new Date(imageContent.uploadDatum).toLocaleDateString()}</p>
                         <div className="flex justify-end">
                             <button
                                 onClick={() => onEdit(imageContent)}
