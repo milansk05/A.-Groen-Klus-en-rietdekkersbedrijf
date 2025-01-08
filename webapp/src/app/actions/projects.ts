@@ -5,6 +5,25 @@ import { revalidatePath } from 'next/cache'
 
 const prisma = new PrismaClient()
 
+export type Project = {
+    id: number
+    title: string
+    status: string
+    description: string | null
+    imageUrl: string | null
+    createdAt: Date
+    updatedAt: Date
+}
+
+export type CreateProjectInput = {
+    title: string
+    status: string
+    description?: string
+    imageUrl?: string
+}
+
+export type UpdateProjectInput = CreateProjectInput
+
 export async function getProjects() {
     try {
         const projects = await prisma.project.findMany({
@@ -12,49 +31,47 @@ export async function getProjects() {
                 createdAt: 'desc'
             }
         })
-        return { success: true, data: projects }
+        return { success: true, data: projects } as const
     } catch (error) {
         console.error('Error fetching projects:', error)
-        return { success: false, error: 'Failed to fetch projects' }
+        return { success: false, error: 'Failed to fetch projects' } as const
     }
 }
 
-export async function createProject(data: {
-    title: string
-    status: string
-    description?: string
-    imageUrl?: string
-}) {
+export async function createProject(data: CreateProjectInput) {
     try {
         const project = await prisma.project.create({
-            data
+            data: {
+                ...data,
+                description: data.description || null,
+                imageUrl: data.imageUrl || null
+            }
         })
         revalidatePath('/admin/projecten')
         revalidatePath('/projecten')
-        return { success: true, data: project }
+        return { success: true, data: project } as const
     } catch (error) {
         console.error('Error creating project:', error)
-        return { success: false, error: 'Failed to create project' }
+        return { success: false, error: 'Failed to create project' } as const
     }
 }
 
-export async function updateProject(id: number, data: {
-    title: string
-    status: string
-    description?: string
-    imageUrl?: string
-}) {
+export async function updateProject(id: number, data: UpdateProjectInput) {
     try {
         const project = await prisma.project.update({
             where: { id },
-            data
+            data: {
+                ...data,
+                description: data.description || null,
+                imageUrl: data.imageUrl || null
+            }
         })
         revalidatePath('/admin/projecten')
         revalidatePath('/projecten')
-        return { success: true, data: project }
+        return { success: true, data: project } as const
     } catch (error) {
         console.error('Error updating project:', error)
-        return { success: false, error: 'Failed to update project' }
+        return { success: false, error: 'Failed to update project' } as const
     }
 }
 
@@ -65,9 +82,9 @@ export async function deleteProject(id: number) {
         })
         revalidatePath('/admin/projecten')
         revalidatePath('/projecten')
-        return { success: true }
+        return { success: true } as const
     } catch (error) {
         console.error('Error deleting project:', error)
-        return { success: false, error: 'Failed to delete project' }
+        return { success: false, error: 'Failed to delete project' } as const
     }
 }

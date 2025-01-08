@@ -2,19 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
-import { getProjects, createProject, updateProject, deleteProject } from '@/app/actions/projects'
+import { getProjects, createProject, updateProject, deleteProject, type Project } from '@/app/actions/projects'
 import ProjectList from '../../../../../components/admin/ProjectList'
 import ProjectForm from '../../../../../components/admin/ProjectForm'
-
-interface Project {
-    id: number
-    title: string
-    status: string
-    description?: string | null
-    imageUrl?: string | null
-    createdAt: Date
-    updatedAt: Date
-}
 
 export default function ProjectenPage() {
     const [projects, setProjects] = useState<Project[]>([])
@@ -34,8 +24,13 @@ export default function ProjectenPage() {
         setIsLoading(false)
     }
 
-    const handleAddProject = async (newProject: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => {
-        const result = await createProject(newProject)
+    const handleAddProject = async (formData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => {
+        const result = await createProject({
+            title: formData.title,
+            status: formData.status,
+            description: formData.description || undefined,
+            imageUrl: formData.imageUrl || undefined
+        })
         if (result.success) {
             await loadProjects()
             setIsAddingProject(false)
@@ -44,12 +39,13 @@ export default function ProjectenPage() {
         }
     }
 
-    const handleEditProject = async (updatedProject: Omit<Project, 'createdAt' | 'updatedAt'>) => {
-        const result = await updateProject(updatedProject.id, {
-            title: updatedProject.title,
-            status: updatedProject.status,
-            description: updatedProject.description || undefined,
-            imageUrl: updatedProject.imageUrl || undefined
+    const handleEditProject = async (formData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => {
+        if (!editingProject) return;
+        const result = await updateProject(editingProject.id, {
+            title: formData.title,
+            status: formData.status,
+            description: formData.description || undefined,
+            imageUrl: formData.imageUrl || undefined
         })
         if (result.success) {
             await loadProjects()
