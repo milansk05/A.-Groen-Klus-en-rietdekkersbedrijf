@@ -1,90 +1,64 @@
-import { useState } from 'react'
+"use client"
 
-interface Account {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-    lastLogin: string;
-}
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { date, z } from 'zod';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+} from "@/components/ui/form";
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 
-interface AccountFormProps {
-    account?: Account;
-    onSubmit: (account: Omit<Account, 'id'> & { id?: number }) => void;
-    onCancel: () => void;
-}
+import { createAccount } from '@/app/actions/accounts';
 
-export default function AccountForm({ account, onSubmit, onCancel }: AccountFormProps) {
-    const [name, setName] = useState(account?.name || '')
-    const [email, setEmail] = useState(account?.email || '')
-    const [role, setRole] = useState(account?.role || '')
+const formSchema = z.object({
+    name: z.string(),
+    email: z.string().email(),
+});
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        onSubmit({ id: account?.id, name, email, role, lastLogin: account?.lastLogin || new Date().toISOString().split('T')[0] })
-    }
+
+export default function AccountForm() {
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+        }
+    })
+
+    
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                    Naam
-                </label>
-                <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="name"
-                    type="text"
-                    placeholder="Volledige naam"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(createAccount)}>
+                <FormField control={form.control} name="name"  render={({ field }) => (
+
+                    <FormItem>
+                        <FormLabel>Naam</FormLabel>
+                        <FormControl>
+                            <Input placeholder="naam" {...field} />
+                        </FormControl>
+                    </FormItem>
+
+                )}
                 />
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                    Email
-                </label>
-                <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="email"
-                    type="email"
-                    placeholder="Email adres"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
+                <FormField control={form.control} name="email" render={({ field }) => (
+                    <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Email" {...field} />
+                            </FormControl>
+                        </FormItem>
+                )}
                 />
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role">
-                    Rol
-                </label>
-                <select
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="role"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    required
-                >
-                    <option value="">Selecteer rol</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Medewerker">Medewerker</option>
-                </select>
-            </div>
-            <div className="flex items-center justify-between">
-                <button
-                    className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    type="submit"
-                >
-                    {account ? 'Bijwerken' : 'Toevoegen'}
-                </button>
-                <button
-                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    type="button"
-                    onClick={onCancel}
-                >
-                    Annuleren
-                </button>
-            </div>
-        </form>
+
+                <Button type='submit'>Submit</Button>
+            </form>
+        </Form>
     )
 }

@@ -27,7 +27,9 @@ export async function createProject(data: {
 }) {
     try {
         const project = await prisma.project.create({
-            data
+            data: {
+                ...data
+            }
         })
         revalidatePath('/admin/projecten')
         revalidatePath('/projecten')
