@@ -38,6 +38,21 @@ export async function getProjects() {
     }
 }
 
+export async function getRecentProjects(limit: number = 4) {
+    try {
+        const projects = await prisma.project.findMany({
+            orderBy: {
+                createdAt: 'desc'
+            },
+            take: limit
+        })
+        return { success: true, data: projects } as const
+    } catch (error) {
+        console.error('Error fetching recent projects:', error)
+        return { success: false, error: 'Failed to fetch recent projects' } as const
+    }
+}
+
 export async function createProject(data: CreateProjectInput) {
     try {
         const project = await prisma.project.create({
@@ -86,5 +101,26 @@ export async function deleteProject(id: number) {
     } catch (error) {
         console.error('Error deleting project:', error)
         return { success: false, error: 'Failed to delete project' } as const
+    }
+}
+
+export async function getProjectsCount() {
+    try {
+        const totalCount = await prisma.project.count()
+
+        const now = new Date()
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+        const monthlyCount = await prisma.project.count({
+            where: {
+                createdAt: {
+                    gte: startOfMonth
+                }
+            }
+        })
+
+        return { success: true, data: { totalCount, monthlyCount } } as const
+    } catch (error) {
+        console.error('Error fetching project counts:', error)
+        return { success: false, error: 'Failed to fetch project counts' } as const
     }
 }

@@ -31,3 +31,13 @@ model Project {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model Image {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  url         String
+  pageSection String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

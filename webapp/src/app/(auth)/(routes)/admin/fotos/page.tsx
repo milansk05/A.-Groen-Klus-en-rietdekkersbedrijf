@@ -1,45 +1,74 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
+import { getImages, createImage, updateImage, deleteImage, type Image } from '@/app/actions/images'
 import ImageList from '../../../../../components/admin/ImageList'
 import ImageForm from '../../../../../components/admin/ImageForm'
 
-interface ImageContent {
-    id: number;
-    naam: string;
-    beschrijving: string;
-    url: string;
-    uploadDatum: string;
-}
-
-const initialImageContent: ImageContent[] = [
-    { id: 1, naam: "Hero Afbeelding", beschrijving: "Hoofdafbeelding voor de homepage", url: "/images/hero.jpg", uploadDatum: "2023-06-15" },
-    { id: 2, naam: "Over Ons Team", beschrijving: "Teamfoto voor de Over Ons pagina", url: "/images/team.jpg", uploadDatum: "2023-06-14" },
-    { id: 3, naam: "Diensten Icoon", beschrijving: "Icoon voor de diensten sectie", url: "/images/services-icon.svg", uploadDatum: "2023-06-13" },
-]
-
-export default function FotosBeheerPagina() {
-    const [imageContents, setImageContents] = useState<ImageContent[]>(initialImageContent)
+export default function FotosPage() {
+    const [images, setImages] = useState<Image[]>([])
     const [isAddingImage, setIsAddingImage] = useState(false)
-    const [editingImage, setEditingImage] = useState<ImageContent | null>(null)
+    const [editingImage, setEditingImage] = useState<Image | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
 
-    const handleAddImage = (newImage: Omit<ImageContent, 'id' | 'uploadDatum'>) => {
-        const currentDate = new Date().toISOString().split('T')[0]
-        setImageContents([...imageContents, { ...newImage, id: imageContents.length + 1, uploadDatum: currentDate }])
-        setIsAddingImage(false)
-    }
+    useEffect(() => {
+        loadImages()
+    }, [])
 
-    const handleEditImage = (updatedImage: Omit<ImageContent, 'id' | 'uploadDatum'> & { id?: number }) => {
-        const currentDate = new Date().toISOString().split('T')[0]
-        if (updatedImage.id) {
-            setImageContents(imageContents.map(img => img.id === updatedImage.id ? { ...updatedImage, id: img.id, uploadDatum: currentDate } : img))
+    const loadImages = async () => {
+        const result = await getImages()
+        if (result.success) {
+            setImages(result.data)
         }
-        setEditingImage(null)
+        setIsLoading(false)
     }
 
-    const handleDeleteImage = (imageId: number) => {
-        setImageContents(imageContents.filter(img => img.id !== imageId))
+    const handleAddImage = async (formData: Omit<Image, 'id' | 'createdAt' | 'updatedAt'>) => {
+        console.log('Submitting form data:', formData) // Add this line for debugging
+        const result = await createImage({
+            name: formData.name,
+            description: formData.description || undefined,
+            url: formData.url,
+            section: formData.section
+        })
+        if (result.success) {
+            await loadImages()
+            setIsAddingImage(false)
+        } else {
+            alert('Er is een fout opgetreden bij het toevoegen van de afbeelding: ' + result.error)
+        }
+    }
+
+    const handleEditImage = async (formData: Omit<Image, 'id' | 'createdAt' | 'updatedAt'>) => {
+        if (!editingImage) return
+        const result = await updateImage(editingImage.id, {
+            name: formData.name,
+            description: formData.description || undefined,
+            url: formData.url,
+            section: formData.section
+        })
+        if (result.success) {
+            await loadImages()
+            setEditingImage(null)
+        } else {
+            alert('Er is een fout opgetreden bij het bijwerken van de afbeelding: ' + result.error)
+        }
+    }
+
+    const handleDeleteImage = async (imageId: number) => {
+        if (window.confirm('Weet u zeker dat u deze afbeelding wilt verwijderen?')) {
+            const result = await deleteImage(imageId)
+            if (result.success) {
+                await loadImages()
+            } else {
+                alert('Er is een fout opgetreden bij het verwijderen van de afbeelding: ' + result.error)
+            }
+        }
+    }
+
+    if (isLoading) {
+        return <div>Laden...</div>
     }
 
     return (
@@ -61,14 +90,14 @@ export default function FotosBeheerPagina() {
 
             {editingImage && (
                 <ImageForm
-                    imageContent={editingImage}
+                    image={editingImage}
                     onSubmit={handleEditImage}
                     onCancel={() => setEditingImage(null)}
                 />
             )}
 
             <ImageList
-                imageContents={imageContents}
+                images={images}
                 onEdit={setEditingImage}
                 onDelete={handleDeleteImage}
             />
