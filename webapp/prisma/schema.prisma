@@ -12,14 +12,11 @@ model User {
   id         Int      @id @default(autoincrement())
   name       String   @db.VarChar(100)
   email      String   @db.VarChar(100)
-  password   String
-  role       Role
-  last_login DateTime @db.Date
-}
-
-enum Role {
-  Admin
-  User
+  password   String?
+  role       String
+  last_login DateTime? @db.Date
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Project {
@@ -28,6 +25,7 @@ model Project {
   status      String
   description String?
   imageUrl    String?
+  type        String   @default("klussen")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

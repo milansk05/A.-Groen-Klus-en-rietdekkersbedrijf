@@ -20,6 +20,9 @@ export default function ProjectenPage() {
         const result = await getProjects()
         if (result.success) {
             setProjects(result.data)
+        } else {
+            console.error('Error fetching projects:', result.error)
+            // Optioneel: toon een foutmelding aan de gebruiker
         }
         setIsLoading(false)
     }
@@ -28,8 +31,9 @@ export default function ProjectenPage() {
         const result = await createProject({
             title: formData.title,
             status: formData.status,
-            description: formData.description || undefined,
-            imageUrl: formData.imageUrl || undefined
+            type: formData.type,
+            description: formData.description ?? null,
+            imageUrl: formData.imageUrl ?? null
         })
         if (result.success) {
             await loadProjects()
@@ -44,8 +48,9 @@ export default function ProjectenPage() {
         const result = await updateProject(editingProject.id, {
             title: formData.title,
             status: formData.status,
-            description: formData.description || undefined,
-            imageUrl: formData.imageUrl || undefined
+            type: formData.type,
+            description: formData.description ?? null,
+            imageUrl: formData.imageUrl ?? null
         })
         if (result.success) {
             await loadProjects()

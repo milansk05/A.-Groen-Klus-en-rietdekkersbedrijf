@@ -1,6 +1,9 @@
+'use client'
+
 import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { type Project } from '@/app/actions/projects'
+import { uploadFile } from '@/app/actions/upload'
 
 type ProjectFormData = Omit<Project, 'id' | 'createdAt' | 'updatedAt'>
 
@@ -13,6 +16,7 @@ interface ProjectFormProps {
 export default function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
     const [title, setTitle] = useState(project?.title || '')
     const [status, setStatus] = useState(project?.status || '')
+    const [type, setType] = useState(project?.type || '')
     const [description, setDescription] = useState(project?.description || '')
     const [imageUrl, setImageUrl] = useState(project?.imageUrl || '')
     const [isUploading, setIsUploading] = useState(false)
@@ -23,6 +27,7 @@ export default function ProjectForm({ project, onSubmit, onCancel }: ProjectForm
         onSubmit({
             title,
             status,
+            type,
             description,
             imageUrl
         })
@@ -36,17 +41,12 @@ export default function ProjectForm({ project, onSubmit, onCancel }: ProjectForm
             formData.append('file', file)
 
             try {
-                const response = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData,
-                })
-
-                const result = await response.json()
+                const result = await uploadFile(formData)
 
                 if (result.success) {
                     setImageUrl(result.filename)
                 } else {
-                    alert('Fout bij het uploaden van de afbeelding')
+                    alert('Fout bij het uploaden van de afbeelding: ' + result.error)
                 }
             } catch (error) {
                 console.error('Error uploading file:', error)
@@ -91,6 +91,22 @@ export default function ProjectForm({ project, onSubmit, onCancel }: ProjectForm
                 </select>
             </div>
             <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="type">
+                    Type
+                </label>
+                <select
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="type"
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    required
+                >
+                    <option value="">Selecteer type</option>
+                    <option value="rietdekken">Rietdekken</option>
+                    <option value="klussen">Klussen</option>
+                </select>
+            </div>
+            <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
                     Beschrijving
                 </label>
@@ -98,7 +114,7 @@ export default function ProjectForm({ project, onSubmit, onCancel }: ProjectForm
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="description"
                     placeholder="Projectbeschrijving"
-                    value={description || ''}
+                    value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={4}
                 />

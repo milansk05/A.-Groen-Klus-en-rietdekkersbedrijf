@@ -10,17 +10,16 @@ export type Image = {
     name: string
     description: string | null
     url: string
-    section: string
+    pageSection: string
     createdAt: Date
     updatedAt: Date
-    pageSection: string
 }
 
 export type CreateImageInput = {
     name: string
     description?: string
     url: string
-    section: string
+    pageSection: string
 }
 
 export type UpdateImageInput = CreateImageInput
@@ -39,10 +38,10 @@ export async function getImages() {
     }
 }
 
-export async function getImagesBySection(pageSection: string) {
+export async function getImagesBySection(section: string) {
     try {
         const images = await prisma.image.findMany({
-            where: { pageSection },
+            where: { pageSection: section },
             orderBy: {
                 createdAt: 'desc'
             }
@@ -55,18 +54,13 @@ export async function getImagesBySection(pageSection: string) {
 }
 
 export async function createImage(data: CreateImageInput) {
-    if (!data || typeof data !== 'object') {
-        console.error('Invalid data received:', data)
-        return { success: false, error: 'Invalid data provided' } as const
-    }
-
     try {
         const image = await prisma.image.create({
             data: {
                 name: data.name,
                 description: data.description || null,
                 url: data.url,
-                pageSection: data.section
+                pageSection: data.pageSection
             }
         })
         revalidatePath('/admin/fotos')
@@ -79,13 +73,19 @@ export async function createImage(data: CreateImageInput) {
 }
 
 export async function updateImage(id: number, data: UpdateImageInput) {
+    console.log('Updating image:', id, data)
+    if (!id || !data) {
+        console.error('Invalid input for updateImage:', { id, data })
+        return { success: false, error: 'Invalid input for image update' } as const
+    }
     try {
         const image = await prisma.image.update({
             where: { id },
             data: {
-                ...data,
+                name: data.name,
                 description: data.description || null,
-                pageSection: data.section
+                url: data.url,
+                pageSection: data.pageSection
             }
         })
         revalidatePath('/admin/fotos')

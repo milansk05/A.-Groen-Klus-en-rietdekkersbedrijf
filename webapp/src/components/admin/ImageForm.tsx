@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { type Image as ImageType } from '@/app/actions/images'
+import { uploadFile } from '@/app/actions/upload'
 
 type ImageFormData = Omit<ImageType, 'id' | 'createdAt' | 'updatedAt'>
 
@@ -28,15 +29,12 @@ export default function ImageForm({ image, onSubmit, onCancel }: ImageFormProps)
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        const formData: ImageFormData = {
+        onSubmit({
             name,
             description,
             url,
-            section,
-            pageSection: section // Add this line
-        }
-        console.log('Submitting form data:', formData) // Add this line for debugging
-        onSubmit(formData)
+            pageSection: section
+        })
     }
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,17 +45,13 @@ export default function ImageForm({ image, onSubmit, onCancel }: ImageFormProps)
             formData.append('file', file)
 
             try {
-                const response = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData,
-                })
-
-                const result = await response.json()
+                const result = await uploadFile(formData)
+                console.log('Upload result:', result)
 
                 if (result.success) {
                     setUrl(result.filename)
                 } else {
-                    alert('Fout bij het uploaden van de afbeelding')
+                    alert('Fout bij het uploaden van de afbeelding: ' + result.error)
                 }
             } catch (error) {
                 console.error('Error uploading file:', error)

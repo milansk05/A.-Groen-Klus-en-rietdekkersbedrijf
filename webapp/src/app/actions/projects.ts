@@ -9,6 +9,7 @@ export type Project = {
     id: number
     title: string
     status: string
+    type: string
     description: string | null
     imageUrl: string | null
     createdAt: Date
@@ -18,6 +19,7 @@ export type Project = {
 export type CreateProjectInput = {
     title: string
     status: string
+    type: string
     description?: string
     imageUrl?: string
 }
@@ -31,10 +33,30 @@ export async function getProjects() {
                 createdAt: 'desc'
             }
         })
-        return { success: true, data: projects } as const
+        return { success: true, data: projects }
     } catch (error) {
         console.error('Error fetching projects:', error)
-        return { success: false, error: 'Failed to fetch projects' } as const
+        return { success: false, error: 'Failed to fetch projects', data: [] }
+    }
+}
+
+export async function createProject(data: CreateProjectInput) {
+    try {
+        const project = await prisma.project.create({
+            data: {
+                title: data.title,
+                status: data.status,
+                type: data.type,
+                description: data.description || null,
+                imageUrl: data.imageUrl || null
+            }
+        })
+        revalidatePath('/admin/projecten')
+        revalidatePath('/projecten')
+        return { success: true, data: project } as const
+    } catch (error) {
+        console.error('Error creating project:', error)
+        return { success: false, error: 'Failed to create project' } as const
     }
 }
 
@@ -50,24 +72,6 @@ export async function getRecentProjects(limit: number = 4) {
     } catch (error) {
         console.error('Error fetching recent projects:', error)
         return { success: false, error: 'Failed to fetch recent projects' } as const
-    }
-}
-
-export async function createProject(data: CreateProjectInput) {
-    try {
-        const project = await prisma.project.create({
-            data: {
-                ...data,
-                description: data.description || null,
-                imageUrl: data.imageUrl || null
-            }
-        })
-        revalidatePath('/admin/projecten')
-        revalidatePath('/projecten')
-        return { success: true, data: project } as const
-    } catch (error) {
-        console.error('Error creating project:', error)
-        return { success: false, error: 'Failed to create project' } as const
     }
 }
 

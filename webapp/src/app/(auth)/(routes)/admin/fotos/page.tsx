@@ -25,12 +25,12 @@ export default function FotosPage() {
     }
 
     const handleAddImage = async (formData: Omit<Image, 'id' | 'createdAt' | 'updatedAt'>) => {
-        console.log('Submitting form data:', formData) // Add this line for debugging
+        console.log('Submitting form data:', formData)
         const result = await createImage({
             name: formData.name,
             description: formData.description || undefined,
             url: formData.url,
-            section: formData.section
+            pageSection: formData.pageSection
         })
         if (result.success) {
             await loadImages()
@@ -41,18 +41,28 @@ export default function FotosPage() {
     }
 
     const handleEditImage = async (formData: Omit<Image, 'id' | 'createdAt' | 'updatedAt'>) => {
-        if (!editingImage) return
+        if (!editingImage) {
+            console.error('No image selected for editing');
+            return;
+        }
+        console.log('Editing image:', editingImage.id, formData);
+        if (!formData || typeof formData !== 'object') {
+            console.error('Invalid form data:', formData);
+            alert('Er is een fout opgetreden: Ongeldige formuliergegevens');
+            return;
+        }
         const result = await updateImage(editingImage.id, {
             name: formData.name,
             description: formData.description || undefined,
             url: formData.url,
-            section: formData.section
-        })
+            pageSection: formData.pageSection
+        });
         if (result.success) {
-            await loadImages()
-            setEditingImage(null)
+            await loadImages();
+            setEditingImage(null);
         } else {
-            alert('Er is een fout opgetreden bij het bijwerken van de afbeelding: ' + result.error)
+            console.error('Error updating image:', result.error);
+            alert('Er is een fout opgetreden bij het bijwerken van de afbeelding: ' + result.error);
         }
     }
 
