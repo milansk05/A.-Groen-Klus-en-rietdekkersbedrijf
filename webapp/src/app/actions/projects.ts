@@ -47,8 +47,8 @@ export async function createProject(data: CreateProjectInput) {
                 title: data.title,
                 status: data.status,
                 type: data.type,
-                description: data.description || null,
-                imageUrl: data.imageUrl || null
+                description: data.description ?? null,
+                imageUrl: data.imageUrl ?? null
             }
         })
         revalidatePath('/admin/projecten')
@@ -57,6 +57,27 @@ export async function createProject(data: CreateProjectInput) {
     } catch (error) {
         console.error('Error creating project:', error)
         return { success: false, error: 'Failed to create project' } as const
+    }
+}
+
+export async function updateProject(id: number, data: UpdateProjectInput) {
+    try {
+        const project = await prisma.project.update({
+            where: { id },
+            data: {
+                title: data.title,
+                status: data.status,
+                type: data.type,
+                description: data.description ?? null,
+                imageUrl: data.imageUrl ?? null
+            }
+        })
+        revalidatePath('/admin/projecten')
+        revalidatePath('/projecten')
+        return { success: true, data: project } as const
+    } catch (error) {
+        console.error('Error updating project:', error)
+        return { success: false, error: 'Failed to update project' } as const
     }
 }
 
@@ -72,25 +93,6 @@ export async function getRecentProjects(limit: number = 4) {
     } catch (error) {
         console.error('Error fetching recent projects:', error)
         return { success: false, error: 'Failed to fetch recent projects' } as const
-    }
-}
-
-export async function updateProject(id: number, data: UpdateProjectInput) {
-    try {
-        const project = await prisma.project.update({
-            where: { id },
-            data: {
-                ...data,
-                description: data.description || null,
-                imageUrl: data.imageUrl || null
-            }
-        })
-        revalidatePath('/admin/projecten')
-        revalidatePath('/projecten')
-        return { success: true, data: project } as const
-    } catch (error) {
-        console.error('Error updating project:', error)
-        return { success: false, error: 'Failed to update project' } as const
     }
 }
 

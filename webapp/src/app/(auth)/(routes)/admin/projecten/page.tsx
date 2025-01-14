@@ -32,8 +32,8 @@ export default function ProjectenPage() {
             title: formData.title,
             status: formData.status,
             type: formData.type,
-            description: formData.description ?? null,
-            imageUrl: formData.imageUrl ?? null
+            description: formData.description || undefined,
+            imageUrl: formData.imageUrl || undefined
         })
         if (result.success) {
             await loadProjects()
@@ -49,8 +49,8 @@ export default function ProjectenPage() {
             title: formData.title,
             status: formData.status,
             type: formData.type,
-            description: formData.description ?? null,
-            imageUrl: formData.imageUrl ?? null
+            description: formData.description || undefined,
+            imageUrl: formData.imageUrl || undefined
         })
         if (result.success) {
             await loadProjects()
