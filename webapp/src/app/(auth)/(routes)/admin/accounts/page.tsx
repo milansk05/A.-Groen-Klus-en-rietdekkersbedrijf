@@ -1,9 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 import AccountList from '../../../../../components/admin/AccountList'
 import AccountForm from '../../../../../components/admin/AccountForm'
+
+
+import { getAccounts } from '@/app/actions/accounts'
+
+interface tAccount {
+    tname: string
+    temail: string
+    trole: string
+    tpassword: string
+    tcreatedAt: Date
+    tupdatedAt: Date
+    tlastLogin: Date
+}
 
 interface Account {
     id: number;
@@ -13,6 +26,7 @@ interface Account {
     lastLogin: string;
 }
 
+
 const initialAccounts: Account[] = [
     { id: 1, name: "Arjen Groen", email: "arjen@agroen-dv.nl", role: "Admin", lastLogin: "2023-06-15" },
     { id: 2, name: "Jan Janssen", email: "jan@agroen-dv.nl", role: "Medewerker", lastLogin: "2023-06-14" },
@@ -20,9 +34,24 @@ const initialAccounts: Account[] = [
 ]
 
 export default function AccountsPage() {
+    const [taccounts, tsetAccounts] = useState<tAccount[]>([])
+
     const [accounts, setAccounts] = useState<Account[]>(initialAccounts)
     const [isAddingAccount, setIsAddingAccount] = useState(false)
     const [editingAccount, setEditingAccount] = useState<Account | null>(null)
+
+    useEffect(() => {
+        loadAccounts();
+    }, [])
+    
+    const loadAccounts = async () => {
+        const results = await getAccounts();
+        
+        console.log(results);
+        
+        tsetAccounts(results);
+    }
+
 
     const handleAddAccount = (newAccount: Omit<Account, 'id'>) => {
         setAccounts([...accounts, { ...newAccount, id: accounts.length + 1 }])
@@ -57,13 +86,13 @@ export default function AccountsPage() {
                 <AccountForm onSubmit={handleAddAccount} onCancel={() => setIsAddingAccount(false)} />
             )}
 
-            {editingAccount && (
+            {/* {editingAccount && (
                 <AccountForm
                     account={editingAccount}
                     onSubmit={handleEditAccount}
                     onCancel={() => setEditingAccount(null)}
                 />
-            )}
+            )} */}
 
             <AccountList
                 accounts={accounts}

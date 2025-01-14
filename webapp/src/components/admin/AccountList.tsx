@@ -1,4 +1,7 @@
 import { Edit, Trash2 } from 'lucide-react'
+import { getAccounts } from '@/app/actions/accounts';
+
+
 
 interface Account {
     id: number;

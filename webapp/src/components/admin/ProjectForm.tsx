@@ -18,8 +18,8 @@ interface ProjectFormProps {
 }
 
 export default function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
-    const [title, setTitle] = useState(project?.title || '')
-    const [status, setStatus] = useState(project?.status || '')
+    const [title, setTitle] = useState(project?.title || '');
+    const [status, setStatus] = useState(project?.status || '');
     const [description, setDescription] = useState(project?.description || '')
     const [imageUrl, setImageUrl] = useState(project?.imageUrl || '')
 
