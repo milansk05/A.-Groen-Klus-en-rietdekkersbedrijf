@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 import AccountList from '../../../../../components/admin/AccountList'
 import AccountForm from '../../../../../components/admin/AccountForm'
+import { getAccounts } from '@/app/actions/accounts'
 
 interface Account {
     id: number;
@@ -20,9 +21,29 @@ const initialAccounts: Account[] = [
 ]
 
 export default function AccountsPage() {
+
+
+
     const [accounts, setAccounts] = useState<Account[]>(initialAccounts)
     const [isAddingAccount, setIsAddingAccount] = useState(false)
     const [editingAccount, setEditingAccount] = useState<Account | null>(null)
+
+    const [isLoading, setIsLoading] = useState(true);
+
+
+
+    useEffect(() => {
+        loadAccounts();
+    }, [])
+
+    const loadAccounts = async () => {        
+        const result = await getAccounts();
+
+        if (result.succes) {
+            setAccounts(result.data);
+        }
+        setIsLoading(false);
+    }
 
     const handleAddAccount = (newAccount: Omit<Account, 'id'>) => {
         setAccounts([...accounts, { ...newAccount, id: accounts.length + 1 }])
