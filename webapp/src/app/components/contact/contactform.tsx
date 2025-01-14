@@ -57,7 +57,7 @@ export default function ContactForm() {
 
                         <button
                             type="submit"
-                            className="bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-colors"
+                            className="bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-colors"
                         >
                             Versturen
                         </button>
@@ -93,11 +93,17 @@ export default function ContactForm() {
                             <p>59536276</p>
                         </div>
                     </div>
-                    <div className="bg-white shadow-lg p-6 rounded-lg h-48 flex justify-center items-center">
-                        <h4 className="font-bold text-center text-gray-500">
-                            Ruimte voor Google Maps of logo
-                        </h4>
-                    </div>
+                    <div className="bg-white shadow-lg p-6 rounded-lg">
+            <iframe
+              title="Google Maps - A. Groen Dienstverlening"
+              src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBBbwTnBt80Lpb8TVc78sXpzXWtkNJTsh0&q=Emmerhoutstraat+57,+7814+XW+Emmen"
+              width="100%"
+              height="300px"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+            ></iframe>
+          </div>
                 </div>
             </div>
         </div>
