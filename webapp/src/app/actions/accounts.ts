@@ -1,35 +1,40 @@
-'use server'
-
-import { Prisma } from "@prisma/client"
+import { Prisma, User } from "@prisma/client"
 import { prisma } from "../../../utils/prismadb"
+import axios from "axios";
 
 
-export async function getAccounts() {
-    try {
-        const users = await prisma.user.findMany();
+// export async function getAccounts() {
+//     // try {
+//     //     // const users = await prisma.user.findMany();
+//     //     // return {succes: true, data: users}
+//     // } catch (error) {
+//     //     return {succes: false, error: "Ophalen van accounts/users is niet gelukt!"}
+//     // }
+//     try {
+//         const response = await axios.get('http://localhost:3000/api/user');
+//         const output = await Promise.all([response]);
+
+//         return output;
+        
+//     } catch (e) {
+//         console.log(e);
+        
+//     }
 
 
-        return {succes: true, data: users}
-    } catch (error) {
-        return {succes: false, error: "Ophalen van accounts/users is niet gelukt!"}
 
-    }
+// }
+
+const url = 'http://localhost:3000/api/user'
+
+const getUsers = async (): Promise<User[]> => {
+    const res = await fetch(url)
+    
+    return res.json()
 }
 
-export async function createAccounts(data: {
-    name: string
-    password: string
-    email: string
-    role: string
-    last_login: Date
-    createdAt: Date
-    updatedAt: Date
-}) {
-    try {
-        const users = await prisma.user.create({data})
+export default getUsers;
 
-        return {succes: true, data: users}
-    } catch (error) {
-        return {succes: false, error: "Fout bij het aanmaken van user!"}
-    }
-}
+
+
+
