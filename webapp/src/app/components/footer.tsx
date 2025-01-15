@@ -29,21 +29,17 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="flex justify-center gap-6 mt-8">
-                    <Link href="#" className="text-gray-600 hover:text-primary">
+                    <Link href="https://www.facebook.com/agroendienstverlening/about?locale=nl_NL" className="text-gray-600 hover:text-primary">
                         <Facebook size={24} />
                         <span className="sr-only">Facebook</span>
                     </Link>
-                    <Link href="#" className="text-gray-600 hover:text-primary">
+                    <Link href="https://www.instagram.com/arjen.groen/" className="text-gray-600 hover:text-primary">
                         <Instagram size={24} />
                         <span className="sr-only">Instagram</span>
                     </Link>
-                    <Link href="#" className="text-gray-600 hover:text-primary">
+                    <Link href="/contact" className="text-gray-600 hover:text-primary">
                         <Mail size={24} />
                         <span className="sr-only">Email</span>
-                    </Link>
-                    <Link href="#" className="text-gray-600 hover:text-primary">
-                        <Twitter size={24} />
-                        <span className="sr-only">Twitter</span>
                     </Link>
                 </div>
             </div>

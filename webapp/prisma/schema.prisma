@@ -1,41 +1,48 @@
+// Dit definieert de Prisma Client generator
+// Het zorgt ervoor dat Prisma een JavaScript/TypeScript client genereert voor database-interacties
 generator client {
   provider = "prisma-client-js"
 }
 
+// Dit configureert de database connectie
+// Het specificeert dat we PostgreSQL gebruiken en haalt de connection strings uit omgevingsvariabelen
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
+// Dit definieert het User model
 model User {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(100)
-  email      String   @db.VarChar(100)
-  password   String?
-  role       String
-  last_login DateTime? @db.Date
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int       @id @default(autoincrement()) // Unieke identifier, automatisch oplopend
+  name       String    @db.VarChar(100) // Naam van de gebruiker, max 100 karakters
+  email      String    @db.VarChar(100) // Email van de gebruiker, max 100 karakters
+  password   String? // Wachtwoord van de gebruiker, optioneel
+  role       String // Rol van de gebruiker
+  last_login DateTime? @db.Date // Laatste inlogdatum, optioneel
+  createdAt  DateTime  @default(now()) // Tijdstip van aanmaken, standaard de huidige tijd
+  updatedAt  DateTime  @updatedAt // Tijdstip van laatste update, automatisch bijgewerkt
 }
 
+// Dit definieert het Project model
 model Project {
-  id          Int      @id @default(autoincrement())
-  title       String
-  status      String
-  description String?
-  imageUrl    String?
-  type        String   @default("klussen")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          Int      @id @default(autoincrement()) // Unieke identifier, automatisch oplopend
+  title       String // Titel van het project
+  status      String // Status van het project
+  description String? // Beschrijving van het project, optioneel
+  imageUrl    String? // URL naar een afbeelding van het project, optioneel
+  type        String   @default("klussen") // Type project, standaard "klussen"
+  createdAt   DateTime @default(now()) // Tijdstip van aanmaken, standaard de huidige tijd
+  updatedAt   DateTime @updatedAt // Tijdstip van laatste update, automatisch bijgewerkt
 }
 
+// Dit definieert het Image model
 model Image {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  url         String
-  pageSection String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          Int      @id @default(autoincrement()) // Unieke identifier, automatisch oplopend
+  name        String // Naam van de afbeelding
+  description String? // Beschrijving van de afbeelding, optioneel
+  url         String // URL waar de afbeelding te vinden is
+  pageSection String // Sectie van de pagina waar de afbeelding gebruikt wordt
+  createdAt   DateTime @default(now()) // Tijdstip van aanmaken, standaard de huidige tijd
+  updatedAt   DateTime @updatedAt // Tijdstip van laatste update, automatisch bijgewerkt
 }

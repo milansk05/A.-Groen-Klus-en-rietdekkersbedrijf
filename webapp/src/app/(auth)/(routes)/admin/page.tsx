@@ -5,10 +5,7 @@ import NotificationsList from '../../../components/admin/NotificationsList'
 import { getProjectsCount, getRecentProjects } from '@/app/actions/projects'
 
 const notifications = [
-    { id: 1, message: "Nieuwe aanvraag ontvangen", time: "5 minuten geleden" },
-    { id: 2, message: "Nieuwe aanvraag ontvangen", time: "5 minuten geleden" },
-    { id: 3, message: "Nieuwe aanvraag ontvangen", time: "5 minuten geleden" },
-    { id: 4, message: "Nieuwe aanvraag ontvangen", time: "5 minuten geleden" },
+    { id: 1, message: "Voorbeeld Notificatie", time: "5 minuten geleden" },
 ]
 
 export default async function AdminDashboard() {
@@ -25,7 +22,7 @@ export default async function AdminDashboard() {
             <div className="grid md:grid-cols-3 gap-6 mb-8">
                 <MetricCard
                     title="Wekelijkse bezoekers"
-                    value="100000"
+                    value="-"
                     subtitle="deze week"
                     icon={<TrendingUp className="w-6 h-6" />}
                 />

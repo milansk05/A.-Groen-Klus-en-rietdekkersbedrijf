@@ -23,8 +23,8 @@ export default async function ProjectenPage() {
                     <h2 className='text-2xl font-semibold text-[#343333]'>Resultaten die voor zichzelf spreken</h2>
                 </div>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-10'>
-                    <ReviewCard title='Joost van Doorn' img='foto.jpg' amountStars={5} />
-                    <ReviewCard title='Joost van Doorn' img='foto.jpg' amountStars={5} />
+                    <ReviewCard title='Naam persoon' img='./images/profielfoto.png' amountStars={5} />
+                    <ReviewCard title='Naam persoon' img='./images/profielfoto.png' amountStars={5} />
                 </div>
             </div>
 

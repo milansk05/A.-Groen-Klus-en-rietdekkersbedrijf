@@ -9,20 +9,20 @@ interface TeamMember {
 
 const teamMembers: TeamMember[] = [
     {
-        name: "Arjen Groen",
-        role: "Eigenaar & Projectmanager",
+        name: "-",
+        role: "-",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non sapien eget diam gravida malesuada sit amet eget sem. Praesent nec elit purus. Nullam eu erat purus, pretium ante ac. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi massa nec mauris posuere condimentum.",
         imageUrl: "/images/profielfoto.png"
     },
     {
-        name: "Annonymous",
-        role: "Functie/Rol",
+        name: "Arjen Groen",
+        role: "Eigenaar & Projectmanager",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non sapien eget diam gravida malesuada sit amet eget sem. Praesent nec elit purus. Nullam eu erat purus, pretium ante ac. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-        imageUrl: "/images/profielfoto.png"
+        imageUrl: "/images/470232839_615534277474181_3363102830526235454_n.jpg"
     },
     {
-        name: "Annonymous",
-        role: "Functie/Rol",
+        name: "-",
+        role: "-",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non sapien eget diam gravida malesuada sit amet eget sem. Praesent nec elit purus. Nullam eu erat purus, pretium ante ac. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
         imageUrl: "/images/profielfoto.png"
     }
