@@ -1,26 +1,60 @@
-import { useState } from 'react'
+'use client'
 
-interface Project {
-    id: number;
-    title: string;
-    status: string;
-    lastUpdate: string;
-}
+import { useState, useRef } from 'react'
+import Image from 'next/image'
+import { type Project } from '@/app/actions/projects'
+import { uploadFile } from '@/app/actions/upload'
+
+type ProjectFormData = Omit<Project, 'id' | 'createdAt' | 'updatedAt'>
 
 interface ProjectFormProps {
-    project?: Project;
-    onSubmit: (project: Omit<Project, 'id'> & { id?: number }) => void;
-    onCancel: () => void;
+    project?: Project
+    onSubmit: (project: ProjectFormData) => void
+    onCancel: () => void
 }
 
 export default function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
     const [title, setTitle] = useState(project?.title || '')
     const [status, setStatus] = useState(project?.status || '')
-    const [lastUpdate, setLastUpdate] = useState(project?.lastUpdate || '')
+    const [type, setType] = useState(project?.type || '')
+    const [description, setDescription] = useState(project?.description || '')
+    const [imageUrl, setImageUrl] = useState(project?.imageUrl || '')
+    const [isUploading, setIsUploading] = useState(false)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onSubmit({ id: project?.id, title, status, lastUpdate })
+        onSubmit({
+            title,
+            status,
+            type,
+            description,
+            imageUrl
+        })
+    }
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            setIsUploading(true)
+            const formData = new FormData()
+            formData.append('file', file)
+
+            try {
+                const result = await uploadFile(formData)
+
+                if (result.success) {
+                    setImageUrl(result.filename)
+                } else {
+                    alert('Fout bij het uploaden van de afbeelding: ' + result.error)
+                }
+            } catch (error) {
+                console.error('Error uploading file:', error)
+                alert('Er is een fout opgetreden bij het uploaden van de afbeelding')
+            } finally {
+                setIsUploading(false)
+            }
+        }
     }
 
     return (
@@ -51,24 +85,73 @@ export default function ProjectForm({ project, onSubmit, onCancel }: ProjectForm
                     required
                 >
                     <option value="">Selecteer status</option>
-                    <option value="Gepland">Gepland</option>
+                    <option value="In voorbereiding">In voorbereiding</option>
                     <option value="In uitvoering">In uitvoering</option>
                     <option value="Afgerond">Afgerond</option>
                 </select>
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastUpdate">
-                    Laatste Update
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="type">
+                    Type
                 </label>
-                <input
+                <select
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="lastUpdate"
-                    type="date"
-                    value={lastUpdate}
-                    onChange={(e) => setLastUpdate(e.target.value)}
+                    id="type"
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
                     required
+                >
+                    <option value="">Selecteer type</option>
+                    <option value="rietdekken">Rietdekken</option>
+                    <option value="klussen">Klussen</option>
+                </select>
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+                    Beschrijving
+                </label>
+                <textarea
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="description"
+                    placeholder="Projectbeschrijving"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={4}
                 />
             </div>
+            <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="image">
+                    Afbeelding
+                </label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    ref={fileInputRef}
+                    className="hidden"
+                />
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    disabled={isUploading}
+                >
+                    {isUploading ? 'Uploading...' : 'Kies bestand'}
+                </button>
+            </div>
+            {imageUrl && (
+                <div className="mb-4">
+                    <p className="block text-gray-700 text-sm font-bold mb-2">Voorbeeld:</p>
+                    <div className="relative h-48 w-full">
+                        <Image
+                            src={imageUrl}
+                            alt="Voorbeeld"
+                            layout="fill"
+                            objectFit="contain"
+                        />
+                    </div>
+                </div>
+            )}
             <div className="flex items-center justify-between">
                 <button
                     className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

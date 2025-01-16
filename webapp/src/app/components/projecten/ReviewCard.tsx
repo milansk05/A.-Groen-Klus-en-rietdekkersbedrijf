@@ -1,7 +1,5 @@
 import React from 'react'
 
-
-
 interface ReviewCardProps {
     title: string;
     img: string;

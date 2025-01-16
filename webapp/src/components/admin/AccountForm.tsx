@@ -1,90 +1,98 @@
-import { useState } from 'react'
+'use client'
 
-interface Account {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-    lastLogin: string;
-}
+import { z } from 'zod';
 
-interface AccountFormProps {
-    account?: Account;
-    onSubmit: (account: Omit<Account, 'id'> & { id?: number }) => void;
-    onCancel: () => void;
-}
+import axios from "axios";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { 
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel, } from '../ui/form';
 
-export default function AccountForm({ account, onSubmit, onCancel }: AccountFormProps) {
-    const [name, setName] = useState(account?.name || '')
-    const [email, setEmail] = useState(account?.email || '')
-    const [role, setRole] = useState(account?.role || '')
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        onSubmit({ id: account?.id, name, email, role, lastLogin: account?.lastLogin || new Date().toISOString().split('T')[0] })
+const formSchema =  z.object({
+    name: z.string({ message: "Naam is vereist!" }),
+    password: z.string().min(4, { message: "Wachtwoord is vereist!" }),
+    email: z.string().email().min(4, { message: "Email is vereist!" }),
+    role: z.string({ message: "Role is vereist" }),
+    last_login: z.date(),
+});
+
+type UserFormValues = z.infer<typeof formSchema>
+
+export default function AccountForm() {
+    const router = useRouter();
+    
+
+    const form = useForm<UserFormValues>({
+        resolver: zodResolver(formSchema),
+        // default values voor als er wegens onbekende omstandigheden alternatieve data moet worden opgeslagen
+        defaultValues: {
+            name: "",
+            password: "",
+            email: "",
+            role: "",
+            last_login: new Date(),
+        }
+    });
+
+   const onSubmit = async (data: UserFormValues) => {
+    try {
+        await axios.post(`/api/user`, data);
+        router.refresh;
+    } catch (error) {
+        console.log(error);
     }
+   }
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                    Naam
-                </label>
-                <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="name"
-                    type="text"
-                    placeholder="Volledige naam"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                />
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                    Email
-                </label>
-                <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="email"
-                    type="email"
-                    placeholder="Email adres"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role">
-                    Rol
-                </label>
-                <select
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="role"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    required
-                >
-                    <option value="">Selecteer rol</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Medewerker">Medewerker</option>
-                </select>
-            </div>
-            <div className="flex items-center justify-between">
-                <button
-                    className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    type="submit"
-                >
-                    {account ? 'Bijwerken' : 'Toevoegen'}
-                </button>
-                <button
-                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    type="button"
-                    onClick={onCancel}
-                >
-                    Annuleren
-                </button>
-            </div>
-        </form>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+
+                <FormField control={form.control} name='name' render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>naam</FormLabel>
+                        <FormControl>
+                            <Input placeholder='naam' {...field} />
+                        </FormControl>
+                    </FormItem>
+                )} />
+
+                <FormField control={form.control} name='email' render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                            <Input placeholder='email' {...field} />
+                        </FormControl>
+                    </FormItem>
+                )} />
+
+                <FormField control={form.control} name='role' render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Role</FormLabel>
+                        <FormControl>
+                            <Input placeholder='role' {...field} />
+                        </FormControl>
+                    </FormItem>
+                )} />
+
+                <FormField control={form.control} name='password' render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Wachtwoord</FormLabel>
+                        <FormControl>
+                            <Input placeholder='password' {...field} />
+                        </FormControl>
+                    </FormItem>
+                )} />  
+
+                <Button type='submit'>Submit</Button>
+            </form>
+        </Form>
     )
 }

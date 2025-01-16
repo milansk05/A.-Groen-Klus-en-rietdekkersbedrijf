@@ -1,8 +1,4 @@
-interface Project {
-    id: number
-    title: string
-    lastUpdate: string
-}
+import { Project } from '@/app/actions/projects'
 
 interface ProjectsListProps {
     projects: Project[]
@@ -15,21 +11,25 @@ export default function ProjectsList({ projects }: ProjectsListProps) {
             <p className="text-gray-600 mb-6">Overzicht van de meest recente projecten</p>
 
             <div className="space-y-4">
-                {projects.map((project) => (
-                    <div
-                        key={project.id}
-                        className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                        <div className="flex justify-between items-center">
-                            <h3 className="font-medium">Project {project.id}</h3>
-                            <p className="text-sm text-gray-500">
-                                Laatste update: {project.lastUpdate}
-                            </p>
+                {projects.length > 0 ? (
+                    projects.map((project) => (
+                        <div
+                            key={project.id}
+                            className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                            <div className="flex justify-between items-center">
+                                <h3 className="font-medium">{project.title}</h3>
+                                <p className="text-sm text-gray-500">
+                                    Laatste update: {new Date(project.updatedAt).toLocaleString('nl-NL')}
+                                </p>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-2">{project.status}</p>
                         </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <p className="text-gray-500">Geen recente projecten gevonden.</p>
+                )}
             </div>
         </div>
     )
 }
-
