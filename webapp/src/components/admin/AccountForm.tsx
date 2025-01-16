@@ -1,102 +1,97 @@
-"use client"
+'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+import axios from "axios";
 import { useForm } from 'react-hook-form';
-import { date, z } from 'zod';
-import {
+import { zodResolver } from '@hookform/resolvers/zod';
+import { 
     Form,
     FormControl,
     FormField,
     FormItem,
-    FormLabel,
-} from "@/components/ui/form";
+    FormLabel, } from '../ui/form';
+
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 
-import { createAccount } from '@/app/actions/accounts';
-
-const formSchema = z.object({
-    name: z.string(),
-    email: z.string().email(),
-    password: z.string(),
-    confirm: z.string(),
-    role: z.string(),
-    createdAt: z.date(),
-    updatedAt: z.date(),
-    lastLogin: z.date(),
+const formSchema =  z.object({
+    name: z.string({ message: "Naam is vereist!" }),
+    password: z.string().min(4, { message: "Wachtwoord is vereist!" }),
+    email: z.string().email().min(4, { message: "Email is vereist!" }),
+    role: z.string({ message: "Role is vereist" }),
+    last_login: z.date(),
 });
 
-export default function AccountForm() {
+type UserFormValues = z.infer<typeof formSchema>
 
-    const form = useForm<z.infer<typeof formSchema>>({
+export default function AccountForm() {
+    const router = useRouter();
+    
+
+    const form = useForm<UserFormValues>({
         resolver: zodResolver(formSchema),
+        // default values voor als er wegens onbekende omstandigheden alternatieve data moet worden opgeslagen
         defaultValues: {
             name: "",
-            email: "",
             password: "",
+            email: "",
             role: "",
-            createdAt: new Date,
-            updatedAt: new Date,
-            lastLogin: new Date,
+            last_login: new Date(),
         }
     });
 
+   const onSubmit = async (data: UserFormValues) => {
+    try {
+        await axios.post(`/api/user`, data);
+        router.refresh;
+    } catch (error) {
+        console.log(error);
+    }
+   }
+
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(createAccount)}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                <FormField control={form.control} name="name"  render={({ field }) => (
+                <FormField control={form.control} name='name' render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Naam</FormLabel>
+                        <FormLabel>naam</FormLabel>
                         <FormControl>
-                            <Input placeholder="naam" {...field} />
+                            <Input placeholder='naam' {...field} />
                         </FormControl>
                     </FormItem>
-                )}
-                />
+                )} />
 
-                <FormField control={form.control} name="email" render={({ field }) => (
+                <FormField control={form.control} name='email' render={({ field }) => (
                     <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Email" {...field} />
-                            </FormControl>
-                        </FormItem>
-                )}
-                />
-                
-                <FormField control={form.control} name="role" render={({ field }) => (
-                    <FormItem>
-                            <FormLabel>Role</FormLabel>
-                            <FormControl>
-                                <Input placeholder="role" {...field} />
-                            </FormControl>
-                        </FormItem>
-                )}
-                />
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                            <Input placeholder='email' {...field} />
+                        </FormControl>
+                    </FormItem>
+                )} />
 
-                <FormField control={form.control} name="password" render={({ field }) => (
+                <FormField control={form.control} name='role' render={({ field }) => (
                     <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input placeholder="password" {...field} />
-                            </FormControl>
-                        </FormItem>
-                )}
-                />
+                        <FormLabel>Role</FormLabel>
+                        <FormControl>
+                            <Input placeholder='role' {...field} />
+                        </FormControl>
+                    </FormItem>
+                )} />
 
-                <FormField control={form.control} name="confirm" render={({ field }) => (
+                <FormField control={form.control} name='password' render={({ field }) => (
                     <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
-                            <FormControl>
-                                <Input placeholder="confirm" {...field} />
-                            </FormControl>
-                        </FormItem>
-                )}
-                />
+                        <FormLabel>Wachtwoord</FormLabel>
+                        <FormControl>
+                            <Input placeholder='password' {...field} />
+                        </FormControl>
+                    </FormItem>
+                )} />  
 
                 <Button type='submit'>Submit</Button>
-                
             </form>
         </Form>
     )

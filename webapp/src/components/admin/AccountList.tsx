@@ -1,23 +1,12 @@
-import { Edit, Trash2 } from 'lucide-react'
-import { getAccounts } from '@/app/actions/accounts';
-
-
-
-interface Account {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-    lastLogin: string;
-}
+import { User } from '@prisma/client';
+import { Edit, Trash2 } from 'lucide-react';
 
 interface AccountListProps {
-    accounts: Account[];
-    onEdit: (account: Account) => void;
-    onDelete: (accountId: number) => void;
+    users: User[]
 }
 
-export default function AccountList({ accounts, onEdit, onDelete }: AccountListProps) {
+const AccountList: React.FC<AccountListProps> = ({ users }) => {
+  
     return (
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
             <table className="w-full">
@@ -31,21 +20,19 @@ export default function AccountList({ accounts, onEdit, onDelete }: AccountListP
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {accounts.map((account) => (
-                        <tr key={account.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">{account.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{account.email}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{account.role}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{account.lastLogin}</td>
+                        {users.map((user) => (
+                        <tr key={user.id}>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.last_login}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <button
-                                    onClick={() => onEdit(account)}
                                     className="text-indigo-600 hover:text-indigo-900 mr-4"
                                 >
                                     <Edit size={18} />
                                 </button>
                                 <button
-                                    onClick={() => onDelete(account.id)}
                                     className="text-red-600 hover:text-red-900"
                                 >
                                     <Trash2 size={18} />
@@ -58,3 +45,5 @@ export default function AccountList({ accounts, onEdit, onDelete }: AccountListP
         </div>
     )
 }
+
+export default AccountList
