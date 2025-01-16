@@ -1,4 +1,36 @@
-export default function ContactForm() {
+"use client";
+
+import React, { FormEvent, useState } from 'react';
+import emailjs from 'emailjs-com';
+
+const ContactForm: React.FC = () => {
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const form = e.target as HTMLFormElement;
+
+        try {
+            const result = await emailjs.sendForm(
+                process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+                process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+                form,
+                process.env.NEXT_PUBLIC_EMAILJS_USER_ID!
+            );
+
+            console.log('Email sent successfully:', result.text);
+            setSuccess(true);
+            form.reset();
+        } catch (error) {
+            console.error('Failed to send email:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-12">
             <h2 className="text-4xl font-bold mb-6">Stuur ons een bericht</h2>
@@ -8,22 +40,26 @@ export default function ContactForm() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 bg-white shadow-lg p-6 rounded-lg">
-                    <form className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <p className="mb-2 font-semibold">Voornaam *</p>
                                 <input
                                     type="text"
+                                    name="firstName"
                                     placeholder="Voornaam"
                                     className="border border-gray-300 p-3 rounded-lg w-full"
+                                    required
                                 />
                             </div>
                             <div>
                                 <p className="mb-2 font-semibold">Achternaam *</p>
                                 <input
                                     type="text"
+                                    name="lastName"
                                     placeholder="Achternaam"
                                     className="border border-gray-300 p-3 rounded-lg w-full"
+                                    required
                                 />
                             </div>
                         </div>
@@ -32,8 +68,10 @@ export default function ContactForm() {
                             <p className="mb-2 font-semibold">Email-adres *</p>
                             <input
                                 type="email"
+                                name="email"
                                 placeholder="Email-adres"
                                 className="border border-gray-300 p-3 rounded-lg w-full"
+                                required
                             />
                         </div>
 
@@ -41,6 +79,7 @@ export default function ContactForm() {
                             <p className="mb-2 font-semibold">Telefoonnummer *</p>
                             <input
                                 type="text"
+                                name="phone"
                                 placeholder="Telefoonnummer"
                                 className="border border-gray-300 p-3 rounded-lg w-full"
                             />
@@ -49,18 +88,22 @@ export default function ContactForm() {
                         <div>
                             <p className="mb-2 font-semibold">Uw bericht *</p>
                             <textarea
+                                name="message"
                                 placeholder="Uw bericht"
                                 rows={5}
                                 className="border border-gray-300 p-3 rounded-lg w-full"
-                            />
+                                required
+                            ></textarea>
                         </div>
 
                         <button
                             type="submit"
-                            className="bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-colors"
+                            className="bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-colors"
+                            disabled={loading}
                         >
-                            Versturen
+                            {loading ? 'Versturen...' : 'Versturen'}
                         </button>
+                        {success && <p className="text-green-500 mt-4">Bericht succesvol verzonden!</p>}
                     </form>
                 </div>
 
@@ -93,13 +136,21 @@ export default function ContactForm() {
                             <p>59536276</p>
                         </div>
                     </div>
-                    <div className="bg-white shadow-lg p-6 rounded-lg h-48 flex justify-center items-center">
-                        <h4 className="font-bold text-center text-gray-500">
-                            Ruimte voor Google Maps of logo
-                        </h4>
+                    <div className="bg-white shadow-lg p-6 rounded-lg">
+                        <iframe
+                            title="Google Maps - A. Groen Dienstverlening"
+                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBBbwTnBt80Lpb8TVc78sXpzXWtkNJTsh0&q=Emmerhoutstraat+57,+7814+XW+Emmen"
+                            width="100%"
+                            height="300px"
+                            style={{ border: 0 }}
+                            allowFullScreen
+                            loading="lazy"
+                        ></iframe>
                     </div>
                 </div>
             </div>
         </div>
     );
-}
+};
+
+export default ContactForm;
