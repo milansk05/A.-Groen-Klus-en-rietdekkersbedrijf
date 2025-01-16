@@ -1,15 +1,6 @@
 import { Edit, Trash2 } from 'lucide-react'
 import Image from 'next/image'
-
-interface Project {
-    id: number
-    title: string
-    status: string
-    description?: string | null
-    imageUrl?: string | null
-    createdAt: Date
-    updatedAt: Date
-}
+import { type Project } from '@/app/actions/projects'
 
 interface ProjectListProps {
     projects: Project[]

@@ -1,6 +1,10 @@
 import Image from 'next/image'
 
-export default function AboutHero() {
+interface AboutHeroProps {
+    imageUrl?: string
+}
+
+export default function AboutHero({ imageUrl = '/images/randomfoto.jpg' }: AboutHeroProps) {
     return (
         <div className="container mx-auto px-4 pt-24 pb-12">
             <div className="text-center mb-8">
@@ -17,7 +21,7 @@ export default function AboutHero() {
                 </div>
                 <div className="relative h-[300px] md:h-[400px]">
                     <Image
-                        src="/images/randomfoto.jpg"
+                        src={imageUrl}
                         alt="A. Groen Dienstverlening gebouw"
                         fill
                         className="object-cover rounded-lg"

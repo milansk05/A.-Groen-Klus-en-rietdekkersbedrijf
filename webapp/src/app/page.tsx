@@ -1,5 +1,6 @@
-import OptionCard from "./components/home/OptionCard";
-import Button from "./components/ui/button";
+import Image from 'next/image'
+import OptionCard from './components/home/OptionCard'
+import Button from './components/ui/button'
 
 export default function Home() {
   return (
@@ -7,9 +8,9 @@ export default function Home() {
       <div className="flex flex-col items-center gap-6 w-full">
         <div className="w-full flex justify-center">
           <div className="relative w-[6rem]">
-            <img className="absolute -top-2 left-0 w-10 h-10 object-cover rounded-full shadow-[0_0px_10px_0px_rgba(0,0,0,0.4)] border border-white" src="foto.jpg" />
-            <img className="absolute -top-2 left-5 w-10 h-10 object-cover rounded-full shadow-[0_0px_10px_0px_rgba(0,0,0,0.4)] border border-white" src="foto.jpg" />
-            <img className="absolute -top-2 left-10 w-10 h-10 object-cover rounded-full shadow-[0_0px_10px_0px_rgba(0,0,0,0.4)] border border-white" src="foto.jpg" />
+            <img className="absolute -top-2 left-0 w-10 h-10 object-cover rounded-full shadow-[0_0px_10px_0px_rgba(0,0,0,0.4)] border border-white" src="profielfoto.png" />
+            <img className="absolute -top-2 left-5 w-10 h-10 object-cover rounded-full shadow-[0_0px_10px_0px_rgba(0,0,0,0.4)] border border-white" src="profielfoto.png" />
+            <img className="absolute -top-2 left-10 w-10 h-10 object-cover rounded-full shadow-[0_0px_10px_0px_rgba(0,0,0,0.4)] border border-white" src="profielfoto.png" />
           </div>
           <div className="flex">
             <img src="star.svg" />
@@ -21,13 +22,22 @@ export default function Home() {
         </div>
         <h1 className="text-[32px] font-semibold text-center text-[#343333] leading-10">Uw Allround Specialist Voor <br></br> Huis En Dak</h1>
         <p className="text-[16px] text-center text-[#1F1F1F]/60">Professionele renovatie en onderhoud voor uw woning, van <br></br> kleine klussen tot complete dakprojecten</p>
-        <div className="w-full my-10 flex justify-center gap-20 items-center">
-          <OptionCard title="Klussen opties" image="vloer.jpg"  />
+        <div className="w-full mt-20 flex justify-center gap-20 items-center">
+          <OptionCard title="Klussen opties" image="vloer.jpg" />
           <span className="w-[2px] h-32 bg-gray-300"></span>
-          <OptionCard title="Klussen opties" image="vloer.jpg"  />
+          <OptionCard title="Rietdekken opties" image="hut.jpg" />
         </div>
+      </div>
+
+      <div className="mt-20 text-center">
+        <h2 className="text-2xl font-semibold text-[#343333] mb-6">Bent u geïnteresseerd in onze opties?</h2>
         <Button href="/contact" text="Neem contact op" />
       </div>
+
+      <div className="mt-20 text-center">
+        <h2 className="text-2xl font-semibold text-[#343333] mb-6">Wilt u onze klussen zien waaraan wij hebben gewerkt?</h2>
+        <Button href="/projecten" text="Bekijk onze projecten" />
+      </div>
     </div>
-  );
+  )
 }

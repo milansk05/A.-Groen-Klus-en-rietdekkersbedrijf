@@ -89,13 +89,12 @@ export default function AdminLayout({
                             <button className="relative text-gray-700 hover:text-primary">
                                 <Bell className="w-6 h-6" />
                                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                                    4
+                                    0
                                 </span>
                             </button>
 
                             <div className="flex items-center gap-2">
                                 <span className="text-gray-700">Hallo, Arjen</span>
-                                <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
                             </div>
                         </nav>
                     </div>

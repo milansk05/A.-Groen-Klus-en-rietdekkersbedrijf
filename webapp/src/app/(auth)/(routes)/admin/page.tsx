@@ -2,22 +2,16 @@ import { Home, TrendingUp } from 'lucide-react'
 import MetricCard from '../../../components/admin/MetricCard'
 import ProjectsList from '../../../components/admin/ProjectsList'
 import NotificationsList from '../../../components/admin/NotificationsList'
-
-const recentProjects = [
-    { id: 1, title: "Project 1", lastUpdate: "2 uur geleden" },
-    { id: 2, title: "Project 2", lastUpdate: "2 uur geleden" },
-    { id: 3, title: "Project 3", lastUpdate: "2 uur geleden" },
-    { id: 4, title: "Project 4", lastUpdate: "2 uur geleden" },
-]
+import { getProjectsCount, getRecentProjects } from '@/app/actions/projects'
 
 const notifications = [
-    { id: 1, message: "Nieuwe aanvraag ontvangen", time: "5 minuten geleden" },
-    { id: 2, message: "Nieuwe aanvraag ontvangen", time: "5 minuten geleden" },
-    { id: 3, message: "Nieuwe aanvraag ontvangen", time: "5 minuten geleden" },
-    { id: 4, message: "Nieuwe aanvraag ontvangen", time: "5 minuten geleden" },
+    { id: 1, message: "Voorbeeld Notificatie", time: "5 minuten geleden" },
 ]
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+    const projectCounts = await getProjectsCount()
+    const recentProjectsResult = await getRecentProjects(4)
+
     return (
         <div>
             <h1 className="text-2xl font-bold mb-8 flex items-center gap-2">
@@ -28,24 +22,24 @@ export default function AdminDashboard() {
             <div className="grid md:grid-cols-3 gap-6 mb-8">
                 <MetricCard
                     title="Wekelijkse bezoekers"
-                    value="100000"
+                    value="-"
                     subtitle="deze week"
                     icon={<TrendingUp className="w-6 h-6" />}
                 />
                 <MetricCard
                     title="Nieuwe Projecten"
-                    value="24"
+                    value={projectCounts.success ? projectCounts.data.monthlyCount.toString() : "N/A"}
                     subtitle="deze maand"
                 />
                 <MetricCard
-                    title="Klanttevredenheid"
-                    value="4.9"
-                    subtitle="uit 150 reviews"
+                    title="Totaal Projecten"
+                    value={projectCounts.success ? projectCounts.data.totalCount.toString() : "N/A"}
+                    subtitle="alle projecten"
                 />
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
-                <ProjectsList projects={recentProjects} />
+                <ProjectsList projects={recentProjectsResult.success ? recentProjectsResult.data : []} />
                 <NotificationsList notifications={notifications} />
             </div>
         </div>
