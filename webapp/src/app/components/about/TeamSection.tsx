@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from "next/image"
 
 interface TeamMember {
     name: string
@@ -9,23 +9,12 @@ interface TeamMember {
 
 const teamMembers: TeamMember[] = [
     {
-        name: "-",
-        role: "-",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non sapien eget diam gravida malesuada sit amet eget sem. Praesent nec elit purus. Nullam eu erat purus, pretium ante ac. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi massa nec mauris posuere condimentum.",
-        imageUrl: "/images/profielfoto.png"
-    },
-    {
         name: "Arjen Groen",
         role: "Eigenaar & Projectmanager",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non sapien eget diam gravida malesuada sit amet eget sem. Praesent nec elit purus. Nullam eu erat purus, pretium ante ac. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-        imageUrl: "/images/470232839_615534277474181_3363102830526235454_n.jpg"
+        description:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non sapien eget diam gravida malesuada sit amet eget sem. Praesent nec elit purus. Nullam eu erat purus, pretium ante ac. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        imageUrl: "/images/470232839_615534277474181_3363102830526235454_n.jpg",
     },
-    {
-        name: "-",
-        role: "-",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam non sapien eget diam gravida malesuada sit amet eget sem. Praesent nec elit purus. Nullam eu erat purus, pretium ante ac. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-        imageUrl: "/images/profielfoto.png"
-    }
 ]
 
 export default function TeamSection() {
@@ -37,19 +26,19 @@ export default function TeamSection() {
                     <p className="text-gray-600">Leer ons kennen!</p>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="flex justify-center">
                     {teamMembers.map((member, index) => (
-                        <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+                        <div key={index} className="bg-white p-10 rounded-lg shadow-md max-w-xl">
                             <div className="relative w-32 h-32 mx-auto mb-4">
                                 <Image
-                                    src={member.imageUrl}
+                                    src={member.imageUrl || "/placeholder.svg"}
                                     alt={member.name}
                                     fill
                                     className="object-cover rounded-full"
                                 />
                             </div>
                             <h3 className="text-xl font-bold text-center mb-1">{member.name}</h3>
-                            <p className="text-primary text-center mb-4">{member.role}</p>
+                            <p className="text-gray-600 text-center mb-4">{member.role}</p>
                             <p className="text-gray-600 text-center">{member.description}</p>
                         </div>
                     ))}

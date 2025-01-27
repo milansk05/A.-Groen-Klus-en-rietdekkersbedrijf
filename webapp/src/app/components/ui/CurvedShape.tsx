@@ -11,8 +11,8 @@ export default function CurvedShape({
     className = "",
     variant = "top",
     colors = {
-        primary: "#343333",
-        secondary: "#343333",
+        primary: "#85c846",
+        secondary: "#85c846",
     },
 }: CurvedShapeProps) {
     if (variant === "top") {
