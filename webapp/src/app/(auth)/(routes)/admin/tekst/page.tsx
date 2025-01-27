@@ -1,45 +1,88 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import TextList from '../../../../../components/admin/TextList'
 import TextForm from '../../../../../components/admin/TextForm'
-
-interface TextContent {
-    id: number;
-    pagina: string;
-    sectie: string;
-    inhoud: string;
-    laatstBijgewerkt: string;
-}
-
-const initialTextContent: TextContent[] = [
-    { id: 1, pagina: "Home", sectie: "Hero", inhoud: "Welkom bij A. Groen Dienstverlening", laatstBijgewerkt: "2023-06-15" },
-    { id: 2, pagina: "Over Ons", sectie: "Introductie", inhoud: "A. Groen Dienstverlening is uw betrouwbare partner voor...", laatstBijgewerkt: "2023-06-14" },
-    { id: 3, pagina: "Diensten", sectie: "Dakwerk", inhoud: "Wij bieden professionele dakwerkzaamheden...", laatstBijgewerkt: "2023-06-13" },
-]
+import { getTextContents, createTextContent, updateTextContent, deleteTextContent, TextContent } from '@/app/actions/text'
 
 export default function TekstBeheerPagina() {
-    const [textContents, setTextContents] = useState<TextContent[]>(initialTextContent)
+    const [textContents, setTextContents] = useState<TextContent[]>([])
     const [isAddingText, setIsAddingText] = useState(false)
     const [editingText, setEditingText] = useState<TextContent | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
-    const handleAddText = (newText: Omit<TextContent, 'id' | 'laatstBijgewerkt'>) => {
-        const currentDate = new Date().toISOString().split('T')[0]
-        setTextContents([...textContents, { ...newText, id: textContents.length + 1, laatstBijgewerkt: currentDate }])
-        setIsAddingText(false)
-    }
+    useEffect(() => {
+        fetchTextContents()
+    }, [])
 
-    const handleEditText = (updatedText: Omit<TextContent, 'id' | 'laatstBijgewerkt'> & { id?: number }) => {
-        const currentDate = new Date().toISOString().split('T')[0]
-        if (updatedText.id) {
-            setTextContents(textContents.map(t => t.id === updatedText.id ? { ...updatedText, id: t.id, laatstBijgewerkt: currentDate } : t))
+    const fetchTextContents = async () => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const result = await getTextContents()
+            if (result.success) {
+                setTextContents(result.data)
+            } else {
+                setError(`Er is een fout opgetreden bij het ophalen van de tekstinhoud: ${result.error}`)
+            }
+        } catch (error) {
+            console.error('Unexpected error:', error)
+            setError('Er is een onverwachte fout opgetreden. Controleer de console voor meer details.')
+        } finally {
+            setIsLoading(false)
         }
-        setEditingText(null)
     }
 
-    const handleDeleteText = (textId: number) => {
-        setTextContents(textContents.filter(t => t.id !== textId))
+    const handleAddText = async (newText: Omit<TextContent, 'id' | 'createdAt' | 'updatedAt'>) => {
+        try {
+            const result = await createTextContent(newText)
+            if (result.success) {
+                await fetchTextContents()
+                setIsAddingText(false)
+            } else {
+                setError(`Fout bij het toevoegen van tekstinhoud: ${result.error}`)
+            }
+        } catch (error) {
+            console.error('Unexpected error:', error)
+            setError('Er is een onverwachte fout opgetreden bij het toevoegen van tekstinhoud.')
+        }
+    }
+
+    const handleEditText = async (updatedText: Omit<TextContent, 'id' | 'createdAt' | 'updatedAt'> & { id?: number }) => {
+        if (updatedText.id) {
+            try {
+                const result = await updateTextContent(updatedText.id, updatedText)
+                if (result.success) {
+                    await fetchTextContents()
+                    setEditingText(null)
+                } else {
+                    setError(`Fout bij het bijwerken van tekstinhoud: ${result.error}`)
+                }
+            } catch (error) {
+                console.error('Unexpected error:', error)
+                setError('Er is een onverwachte fout opgetreden bij het bijwerken van tekstinhoud.')
+            }
+        }
+    }
+
+    const handleDeleteText = async (textId: number) => {
+        try {
+            const result = await deleteTextContent(textId)
+            if (result.success) {
+                await fetchTextContents()
+            } else {
+                setError(`Fout bij het verwijderen van tekstinhoud: ${result.error}`)
+            }
+        } catch (error) {
+            console.error('Unexpected error:', error)
+            setError('Er is een onverwachte fout opgetreden bij het verwijderen van tekstinhoud.')
+        }
+    }
+
+    if (isLoading) {
+        return <div>Laden...</div>
     }
 
     return (
@@ -54,6 +97,13 @@ export default function TekstBeheerPagina() {
                     Nieuwe Tekst
                 </button>
             </div>
+
+            {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong className="font-bold">Fout: </strong>
+                    <span className="block sm:inline">{error}</span>
+                </div>
+            )}
 
             {isAddingText && (
                 <TextForm onSubmit={handleAddText} onCancel={() => setIsAddingText(false)} />

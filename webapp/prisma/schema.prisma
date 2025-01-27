@@ -46,3 +46,14 @@ model Image {
   createdAt   DateTime @default(now()) // Tijdstip van aanmaken, standaard de huidige tijd
   updatedAt   DateTime @updatedAt // Tijdstip van laatste update, automatisch bijgewerkt
 }
+
+model TextContent {
+  id        Int      @id @default(autoincrement())
+  pagina    String
+  sectie    String
+  inhoud    String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([pagina, sectie])
+} 

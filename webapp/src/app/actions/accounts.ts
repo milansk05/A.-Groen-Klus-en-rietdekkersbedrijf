@@ -1,40 +1,26 @@
-import { Prisma, User } from "@prisma/client"
-import { prisma } from "../../../utils/prismadb"
+import { User } from "@prisma/client"
 import axios from "axios";
-
-
-// export async function getAccounts() {
-//     // try {
-//     //     // const users = await prisma.user.findMany();
-//     //     // return {succes: true, data: users}
-//     // } catch (error) {
-//     //     return {succes: false, error: "Ophalen van accounts/users is niet gelukt!"}
-//     // }
-//     try {
-//         const response = await axios.get('http://localhost:3000/api/user');
-//         const output = await Promise.all([response]);
-
-//         return output;
-        
-//     } catch (e) {
-//         console.log(e);
-        
-//     }
-
-
-
-// }
 
 const url = 'http://localhost:3000/api/user'
 
-const getUsers = async (): Promise<User[]> => {
+export const getUsers = async (): Promise<User[]> => {
     const res = await fetch(url)
-    
     return res.json()
 }
 
+export const deleteUser = async (id: number): Promise<void> => {
+    await fetch(`${url}?id=${id}`, { method: 'DELETE' });
+}
+
+export const updateUser = async (id: number, userData: Partial<User>): Promise<User> => {
+    const res = await fetch(`${url}?id=${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
+    return res.json();
+}
+
 export default getUsers;
-
-
-
-
