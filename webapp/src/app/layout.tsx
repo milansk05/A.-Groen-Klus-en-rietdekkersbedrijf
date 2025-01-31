@@ -20,9 +20,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="nl">
-      <body className={bricolageGrotesque.className}>
-        <Navbar />
+    <html lang="en">
+      <body
+        className={`${bricolageGrotesque.className} antialiased`}
+      >
+        <Navbar/>
         {children}
         <Footer />
       </body>

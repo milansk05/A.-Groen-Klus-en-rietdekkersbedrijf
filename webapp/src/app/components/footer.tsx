@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Facebook, Instagram, Mail, Twitter } from 'lucide-react'
-import CurvedShape from './ui/CurvedShape'
+import CurvedShape from './ui/curvedshape'
 
 export default function Footer() {
     return (
