@@ -1,44 +1,47 @@
 import { z } from "zod";
-import { prisma } from "../../../../utils/prismadb"
+import { prisma } from "../../../../utils/prismadb";
 import { NextResponse } from "next/server";
-import { genSaltSync, hashSync } from "bcrypt-ts"
+import { genSaltSync, hashSync } from "bcrypt-ts";
 
 const userSchema = z.object({
     name: z.string({ message: "Naam is vereist!" }),
     password: z.string().min(4, { message: "Wachtwoord is vereist!" }),
     email: z.string().email().min(4, { message: "Email is vereist!" }),
     role: z.string({ message: "Role is vereist" }),
-    last_login: z.date().or(z.string().datetime())
+    last_login: z.union([z.date(), z.string().datetime()]).optional(),
 });
 
 export async function POST(req: Request) {
     try {
         const body = await req.json();
         const salt = genSaltSync(10);
-
         body.password = hashSync(body.password, salt);
 
+        // Validatie check
         const validation = userSchema.safeParse(body);
-
         if (!validation.success) {
-            console.error('validation errror');
-            return NextResponse.json({ error: 'Validation error' }, { status: 400 });
+            console.error('Validation error:', validation.error.format());
+            return NextResponse.json({ error: validation.error.format() }, { status: 400 });
+        }
+
+        // Converteer last_login indien nodig
+        if (typeof body.last_login === 'string') {
+            body.last_login = new Date(body.last_login);
         }
 
         const user = await prisma.user.create({ data: validation.data });
 
-        return NextResponse.json(user)
+        return NextResponse.json(user);
     } catch (error) {
-        console.error('POST -> ACCOUNTS', error)
+        console.error('POST -> ACCOUNTS', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
     try {
         const users = await prisma.user.findMany();
-
-        return NextResponse.json(users)
+        return NextResponse.json(users);
     } catch (error) {
         console.error('GET -> ACCOUNTS', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -54,9 +57,7 @@ export async function DELETE(req: Request) {
             return NextResponse.json({ error: 'ID is required' }, { status: 400 });
         }
 
-        await prisma.user.delete({
-            where: { id: parseInt(id) }
-        });
+        await prisma.user.delete({ where: { id: parseInt(id) } });
 
         return NextResponse.json({ message: 'User deleted successfully' });
     } catch (error) {
@@ -76,10 +77,9 @@ export async function PUT(req: Request) {
         }
 
         const validation = userSchema.partial().safeParse(body);
-
         if (!validation.success) {
-            console.error('validation error');
-            return NextResponse.json({ error: 'Validation error' }, { status: 400 });
+            console.error('Validation error:', validation.error.format());
+            return NextResponse.json({ error: validation.error.format() }, { status: 400 });
         }
 
         if (body.password) {

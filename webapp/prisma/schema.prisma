@@ -14,14 +14,14 @@ datasource db {
 
 // Dit definieert het User model
 model User {
-  id         Int       @id @default(autoincrement()) // Unieke identifier, automatisch oplopend
-  name       String    @db.VarChar(100) // Naam van de gebruiker, max 100 karakters
-  email      String    @db.VarChar(100) // Email van de gebruiker, max 100 karakters
-  password   String? // Wachtwoord van de gebruiker, optioneel
-  role       String // Rol van de gebruiker
-  last_login DateTime? @db.Date // Laatste inlogdatum, optioneel
-  createdAt  DateTime  @default(now()) // Tijdstip van aanmaken, standaard de huidige tijd
-  updatedAt  DateTime  @updatedAt // Tijdstip van laatste update, automatisch bijgewerkt
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(100)
+  email      String    @unique @db.VarChar(100)
+  password   String?
+  role       String
+  last_login DateTime? @db.Date
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 // Dit definieert het Project model
@@ -56,4 +56,4 @@ model TextContent {
   updatedAt DateTime @updatedAt
 
   @@unique([pagina, sectie])
-} 
+}

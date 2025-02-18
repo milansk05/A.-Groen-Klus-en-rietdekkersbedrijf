@@ -5,14 +5,16 @@ import Image from 'next/image'
 import { type Image as ImageType } from '@/app/actions/images'
 import { uploadFile } from '@/app/actions/upload'
 
+// Definieert het type voor formuliergegevens zonder de id en tijdstempels
 type ImageFormData = Omit<ImageType, 'id' | 'createdAt' | 'updatedAt'>
 
 interface ImageFormProps {
-    image?: ImageType
-    onSubmit: (image: ImageFormData) => void
-    onCancel: () => void
+    image?: ImageType // Optioneel bestaand afbeeldingsobject
+    onSubmit: (image: ImageFormData) => void // Callback bij formulierverzending
+    onCancel: () => void // Callback bij annulering
 }
 
+// Lijst van secties waarin afbeeldingen kunnen worden geplaatst
 const SECTIONS = [
     { value: 'about-hero', label: 'Over Ons - Hero' },
     { value: 'mission-vision', label: 'Over Ons - Missie & Visie' },
@@ -20,6 +22,7 @@ const SECTIONS = [
 ]
 
 export default function ImageForm({ image, onSubmit, onCancel }: ImageFormProps) {
+    // State voor formuliervelden
     const [name, setName] = useState(image?.name || '')
     const [description, setDescription] = useState(image?.description || '')
     const [section, setSection] = useState(image?.pageSection || '')
@@ -27,6 +30,7 @@ export default function ImageForm({ image, onSubmit, onCancel }: ImageFormProps)
     const [isUploading, setIsUploading] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
+    // Functie om formulierverzending af te handelen
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         onSubmit({
@@ -37,6 +41,7 @@ export default function ImageForm({ image, onSubmit, onCancel }: ImageFormProps)
         })
     }
 
+    // Functie om een bestand te uploaden
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
@@ -64,6 +69,7 @@ export default function ImageForm({ image, onSubmit, onCancel }: ImageFormProps)
 
     return (
         <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            {/* Naam invoerveld */}
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
                     Naam
@@ -78,6 +84,8 @@ export default function ImageForm({ image, onSubmit, onCancel }: ImageFormProps)
                     required
                 />
             </div>
+
+            {/* Sectie selectievak */}
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="section">
                     Sectie
@@ -97,6 +105,8 @@ export default function ImageForm({ image, onSubmit, onCancel }: ImageFormProps)
                     ))}
                 </select>
             </div>
+
+            {/* Beschrijving invoerveld */}
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
                     Beschrijving
@@ -110,6 +120,8 @@ export default function ImageForm({ image, onSubmit, onCancel }: ImageFormProps)
                     rows={3}
                 />
             </div>
+
+            {/* Bestandsupload knop */}
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="image">
                     Afbeelding
@@ -130,31 +142,13 @@ export default function ImageForm({ image, onSubmit, onCancel }: ImageFormProps)
                     {isUploading ? 'Uploading...' : 'Kies bestand'}
                 </button>
             </div>
-            {url && (
-                <div className="mb-4">
-                    <p className="block text-gray-700 text-sm font-bold mb-2">Voorbeeld:</p>
-                    <div className="relative h-48 w-full">
-                        <Image
-                            src={url}
-                            alt="Voorbeeld"
-                            layout="fill"
-                            objectFit="contain"
-                        />
-                    </div>
-                </div>
-            )}
+
+            {/* Actieknoppen */}
             <div className="flex items-center justify-between">
-                <button
-                    className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    type="submit"
-                >
+                <button className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
                     {image ? 'Bijwerken' : 'Toevoegen'}
                 </button>
-                <button
-                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    type="button"
-                    onClick={onCancel}
-                >
+                <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onClick={onCancel}>
                     Annuleren
                 </button>
             </div>

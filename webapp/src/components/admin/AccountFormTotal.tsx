@@ -11,25 +11,33 @@ interface AccountFormTotalProps {
 }
 
 export default function AccountFormTotal({ user, onSubmit, onCancel }: AccountFormTotalProps) {
+  // State voor formuliervelden, met standaardwaarden op basis van een bestaande gebruiker (indien aanwezig)
   const [name, setName] = useState(user?.name || '')
   const [email, setEmail] = useState(user?.email || '')
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState('') // Wachtwoord wordt niet vooraf ingevuld om veiligheidsredenen
   const [role, setRole] = useState(user?.role || '')
 
+  // Functie voor het afhandelen van het verzenden van het formulier
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const userData: Partial<User> = { name, email, role }
+
+    // Alleen wachtwoord toevoegen als het is ingevuld
     if (password) {
       userData.password = password
     }
+
+    // Bijwerken als er een bestaande gebruiker is, anders nieuw toevoegen
     if (user?.id) {
       await updateUser(user.id, userData)
     }
+
     onSubmit(userData)
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Naam invoerveld */}
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Naam</label>
         <input
@@ -41,6 +49,8 @@ export default function AccountFormTotal({ user, onSubmit, onCancel }: AccountFo
           required
         />
       </div>
+
+      {/* E-mail invoerveld */}
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
         <input
@@ -52,6 +62,8 @@ export default function AccountFormTotal({ user, onSubmit, onCancel }: AccountFo
           required
         />
       </div>
+
+      {/* Wachtwoord invoerveld */}
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-gray-700">Wachtwoord {user ? '(laat leeg om ongewijzigd te laten)' : ''}</label>
         <input
@@ -60,9 +72,11 @@ export default function AccountFormTotal({ user, onSubmit, onCancel }: AccountFo
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          {...(user ? {} : { required: true })}
+          {...(user ? {} : { required: true })} // Vereist alleen voor nieuwe gebruikers
         />
       </div>
+
+      {/* Rol keuzemenu */}
       <div>
         <label htmlFor="role" className="block text-sm font-medium text-gray-700">Rol</label>
         <select
@@ -77,6 +91,8 @@ export default function AccountFormTotal({ user, onSubmit, onCancel }: AccountFo
           <option value="USER">Gebruiker</option>
         </select>
       </div>
+
+      {/* Actieknoppen */}
       <div className="flex justify-end space-x-2">
         <button
           type="button"
